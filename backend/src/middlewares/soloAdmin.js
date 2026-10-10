@@ -1,4 +1,4 @@
-const deleteUser = (req,res, next) =>{
+const vereficarAdmin = (req,res, next) =>{
     try {
         console.log(req.usuario.rol);
         if(req.usuario.rol !== 2){
@@ -14,4 +14,4 @@ const deleteUser = (req,res, next) =>{
         });
     }
 }
-module.exports = deleteUser;
+module.exports = vereficarAdmin;

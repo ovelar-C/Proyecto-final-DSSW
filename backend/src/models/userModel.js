@@ -48,38 +48,28 @@ const deleteUser = async (id)=>{
     const resultado = await pool.query(query,[id]);
     return resultado.rows[0];
 }
-const updateUser = async ()=>{
-
-}
-
-//----------------------------------------------------------------
-const crearPost = async(titulo,contenido,autor_id) =>{
+//incompleto
+const updateUser = async (datos,id)=>{
+    const {username, email, password} = datos;
     const query = `
-    INSERT INTO publicaciones
-    (titulo, contenido, autor_id)
-    VALUES ($1, $2, $3) RETURNING *`;
-    return await pool.query(query,[titulo,contenido,autor_id]);
-}
-const getPostById = async(id) =>{
-    const query = `
-    SELECT * 
-    FROM publicaciones
-    WHERE id = $1`;
-    const resultado = await pool.query(query,[id]);
-    return resultado.rows[0];
-}
-const obtenerPost = async(search, limit, offset)=>{
-    const query = `
-    SELECT * 
-    FROM publicaciones
-    WHERE titulo ILIKE '%' || $1 || '%'
-    LIMIT $2
-    OFFSET $3
+    UPDATE usuarios
+    SET
+        username = COALESCE($1, usuarios.username),
+        email = COALESCE($2, usuarios.email),
+        password = COALESCE($3, usuarios,password)
+        WHERE id = $4
+        RETURNING id, username, email, password
     `;
-    const resultado = await pool.query(query,[search || '',limit,offset]);
-    return resultado.rows;
-}
-//----------------------------------------------------------------
+    const values = [
+        username ?? null,
+        email ?? null,
+        password ?? null,
+        id
+    ];
+    const resultado = await pool.query(query, values);
+    return resultado.rows[0] ?? null;
+};
+
 
 
 module.exports = {
@@ -87,9 +77,6 @@ module.exports = {
     findEmail,
     findById,
     getAllUser,
-    crearPost,
     deleteUser,
     updateUser,
-    getPostById,
-    obtenerPost
 };

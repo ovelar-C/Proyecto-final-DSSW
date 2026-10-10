@@ -101,10 +101,18 @@ const getProfile = async (req, res) => {
         });
     };
 }
+//-----SOLO ADMIN-----
 //obtener todos los usuarios
 const getAllUser = async (req, res) => {
     try {
-        const usuarios = await userModel.getAllUser();
+        const {search, page = 1, limit = 10} = req.query;
+        const offset = (page - 1) * Number(limit);
+
+        const usuarios = await userModel.getAllUser(
+            search,
+            Number(limit),
+            offset
+        );
         if (usuarios.length === 0) {
             return res.status(404).json({
                 mensaje: "NO HAY USUARIOS"
@@ -118,6 +126,7 @@ const getAllUser = async (req, res) => {
         });
     }
 }
+//-----SOLO ADMIN-----
 //eliminar usuario
 const deleteUser = async (req, res) => {
     try {
@@ -144,87 +153,36 @@ const deleteUser = async (req, res) => {
         });
     }
 }
-//actualizar usuario| incompleto
+//actualizar usuario 
 const updateUser = async (req, res) => {
     try {
         const id = req.usuario.id;
-        const {datos} = req.body;
+        const {username,email,password} = req.body;
         const encontrado = await userModel.findById(id);
         if (!encontrado) {
             return res.status(400).json({
-                mensaje: "id no encontrado"
+                mensaje: "usuario no encontrado"
             });
         }
-        const resultado = await userModel.updateUser(datos);
-
-    } catch (error) {
-
-    }
-}
-
-
-//---------------------------------------------------------------------
-const crearPost = async (req, res) => {
-    try {
-        const { titulo, contenido } = req.body;
-        const autor_id = req.usuario.id;
-
-        await userModel.crearPost(titulo, contenido, autor_id);
-        res.status(201).json({
-            mensaje: "publicacion publicada"
-        });
-    } catch (error) {
-        res.status(500).json({
-            mensaje: "error server"
-        });
-    }
-}
-const getPostByID = async (req, res) => {
-    try {
-        const post = await userModel.getPostById(req.params.id);
-
-        if (!post) {
-            return res.status(404).json({
-                error: "Post no encontrado"
-            });
-        }
-        if (post.autor_id !== req.usuario.id) {
-            return res.status(403).json({
-                error: "Forbidden: No eres el dueño"
-            });
-        }
-        res.status(200).json(post);
-    } catch (error) {
-        res.status(500).json({
-            mensaje: "error del servidor"
-        });
-    }
-}
-const listarPosts = async (req, res) => {
-    try {
-        //paginacion
-        const { search, page = 1, limit = 10 } = req.query;
-        //offset
-        const offeset = (page - 1) * Number(limit);
-        const publicaciones = await userModel.obtenerPost(
-            search,
-            Number(limit),
-            offeset
+        const resultado = await userModel.updateUser(
+            {username,email, password}, id
         );
-        if (publicaciones.length === 0) {
-            res.status(404).json({
-                mensjae: "eeror no posts"
-            });
-        }
-        res.status(200).json(publicaciones);
+
+        return res.status(200).json({
+            success : true,
+            message : "datos actualizados correctamente",
+            resultado : resultado
+        })
 
     } catch (error) {
-        res.status(500).json({
-            mensaje: "error del servidor"
+        return res.status(500).json({
+            success : false,
+            message : "error interno del servidor"
         });
     }
 }
-//---------------------------------------------------------------------
+
+
 
 
 module.exports = {
@@ -232,9 +190,6 @@ module.exports = {
     login,
     getProfile,
     getAllUser,
-    crearPost,
     deleteUser,
     updateUser,
-    getPostByID,
-    listarPosts,
 };
