@@ -25,7 +25,7 @@ services:
       JWT_SECRET : admin123
     depends_on:
       - db
-    volumes:
+volumes:
       pgdata:
 
 
