@@ -13,7 +13,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   api:
-    build: .
+    image : ovelarc/api-docker:1.0
     ports:
       - "3000:3000"
     environment:
