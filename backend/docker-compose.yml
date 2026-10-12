@@ -27,7 +27,6 @@ services:
       - db
     volumes:
       pgdata:
-      return go(f, seed, [])
 
 
 
