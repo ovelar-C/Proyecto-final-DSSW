@@ -48,7 +48,7 @@ const deleteUser = async (id)=>{
     const resultado = await pool.query(query,[id]);
     return resultado.rows[0];
 }
-//incompleto
+
 const updateUser = async (datos,id)=>{
     const {username, email, password} = datos;
     const query = `

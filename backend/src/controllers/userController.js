@@ -67,7 +67,7 @@ const login = async (req, res) => {
         return res.status(200).json({
             token : token,
             usuario: usuario
-         });
+        });
 
     } catch (error) {
         return res.status(500).json({
@@ -153,7 +153,8 @@ const deleteUser = async (req, res) => {
         });
     }
 }
-//actualizar usuario 
+//actualizar usuario
+//HASHEAR CONTRASEÑA
 const updateUser = async (req, res) => {
     try {
         const id = req.usuario.id;
